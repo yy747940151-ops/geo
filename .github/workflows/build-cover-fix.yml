@@ -1,0 +1,93 @@
+name: Build cover-fixed Wechatsync browser extension
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'cover-fix/**'
+      - '.github/workflows/build-cover-fix.yml'
+permissions:
+  contents: write
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout patch repository
+        uses: actions/checkout@v4
+        with:
+          path: patch
+          persist-credentials: true
+      - name: Checkout pinned official open-source code
+        uses: actions/checkout@v4
+        with:
+          repository: wechatsync/Wechatsync
+          ref: 42f61e39e214b8d5377d09d788a716defc4abdc0
+          path: upstream
+          persist-credentials: false
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: '9.15.9'
+      - name: Apply minimal cover patches
+        run: |
+          cp patch/cover-fix/patches/baijiahao.ts upstream/packages/core/src/adapters/platforms/baijiahao.ts
+          cp patch/cover-fix/patches/zhihu.ts upstream/packages/core/src/adapters/platforms/zhihu.ts
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path('upstream/packages/extension/manifest.json')
+          m=json.loads(p.read_text(encoding='utf-8'))
+          m['name']='文章同步助手-封面修复测试版'
+          m['description']='在文章同步助手 v2 的基础上增加知乎和百家号草稿封面字段。仅保存草稿，请自行核查。'
+          m['version']='2.0.10.1'
+          p.write_text(json.dumps(m,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
+          b=Path('upstream/packages/core/src/adapters/platforms/baijiahao.ts').read_text()
+          z=Path('upstream/packages/core/src/adapters/platforms/zhihu.ts').read_text()
+          assert 'cover_images: JSON.stringify' in b and '_cover_images_map' in b
+          assert 'titleImage: coverUrl' in z
+          print('Both cover patch locations verified')
+          PY
+      - name: Install dependencies
+        working-directory: upstream
+        run: pnpm install --frozen-lockfile
+      - name: Typecheck and build extension
+        working-directory: upstream
+        run: pnpm --filter @wechatsync/extension build
+      - name: Validate built extension and prepare ZIP
+        run: |
+          test -s upstream/packages/extension/dist/manifest.json
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path('upstream/packages/extension/dist/manifest.json')
+          m=json.loads(p.read_text(encoding='utf-8'))
+          assert m['version']=='2.0.10.1',m
+          assert '封面修复' in m['name'],m
+          print('Built extension manifest validated:',m['name'],m['version'])
+          PY
+          mkdir -p patch/downloads
+          (cd upstream/packages/extension/dist && zip -qr ../../../../patch/downloads/wechatsync-cover-fix-v2.0.10.1.zip .)
+          unzip -l patch/downloads/wechatsync-cover-fix-v2.0.10.1.zip | head -30
+          test -s patch/downloads/wechatsync-cover-fix-v2.0.10.1.zip
+      - name: Publish ZIP to website repository
+        working-directory: patch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add downloads/wechatsync-cover-fix-v2.0.10.1.zip
+          if ! git diff --cached --quiet; then
+            git commit -m "Publish cover-fixed extension build"
+            git push origin HEAD:main
+          fi
+      - name: Backup ZIP as workflow artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: wechatsync-cover-fix-v2.0.10.1
+          path: patch/downloads/wechatsync-cover-fix-v2.0.10.1.zip
+          if-no-files-found: ignore
+          retention-days: 30
