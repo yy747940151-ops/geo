@@ -61,12 +61,12 @@ shadow.innerHTML='<style>'+
 '</style><div class="panel"><div class="top"><span class="title">仪器营销文章工作台 · V5</span>'+
 '<input class="input" id="titleInput" aria-label="编辑文章标题" />'+
 '</div><div class="actions">'+
-'<button id="sync">同步干净正文（带封面）</button>'+
-'<button id="preview" class="alt">核对同步内容</button>'+
+'<button id="sync">一键同步干净正文</button>'+
+'<button id="preview" class="alt">核对同步内容</button><button id="cover" class="alt">查看/保存封面图</button>'+
 '<button id="save" class="alt">保存本机修改</button>'+
 '<button id="reset" class="alt">恢复测试稿</button>'+
 '</div><div class="status" id="status">检查同步助手与封面状态...</div>'+
-'<details><summary>说明与诊断（不会进入文章）</summary><div class="warning">正文只取下方文章内容，顶部工作台控件不参与同步。图片作为正文插图和 SDK thumb 封面同时传入。封面是否被目标平台采用仍需检查草稿。暂不直接公开发布。</div><pre id="diag"></pre></details></div>';
+'<details><summary>说明与诊断（不会进入文章）</summary><div class="warning">正文只取下方文章内容，顶部工作台控件不参与同步。图片作为正文首图并附带封面地址提交，但当前同步助手不会自动给百家号和知乎草稿设置封面；封面需在相应平台补齐。暂不直接公开发布。</div><pre id="diag"></pre></details></div>';
 var el=id=>shadow.getElementById(id);
 el("titleInput").value=titleNode.textContent;
 function status(s){el("status").textContent=s;diag();}
@@ -104,8 +104,15 @@ el("sync").addEventListener("click",function(){
  try{
   if(typeof window.syncPost!=="function")throw new Error("SDK未加载");
   var post=getPost();window.syncPost(post);
-  status("只发送正文、文章封面地址和文末咨询链接。请在同步窗口选平台保存草稿，之后检查封面字段是否被平台接受。");
+  status("已传入干净正文和封面素材。注意：百家号与知乎当前不自动设置草稿封面，需在平台编辑页补齐。");
  }catch(err){status("已取消同步："+err.message);}
+});
+el("cover").addEventListener("click",function(){
+ var url=COVER;
+ var link=document.createElement("a");
+ link.href=url;link.target="_blank";link.rel="noopener noreferrer";
+ link.click();
+ status("已打开封面图片。百家号和知乎当前插件不能自动设置草稿封面，可从各平台编辑页的封面选项上传此图片。");
 });
 el("preview").addEventListener("click",function(){
  try{
@@ -128,7 +135,7 @@ try{
  editor.innerHTML=stored.content;el("titleInput").value=stored.title;setTitle(stored.title);
  }
 }catch(err){}
-status("V5 已加载：请点「核对同步内容」，再点「同步干净正文（带封面）」。");
+status("V5.1：同步干净正文。百家号/知乎暂不支持自动草稿封面，请在编辑页补齐。");
 })();
 </script>
 </body></html>
