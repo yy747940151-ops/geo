@@ -25,6 +25,8 @@ jobs:
           python-version: '3.11'
       - name: Render permanent PNG illustration
         run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq fonts-noto-cjk
           python -m pip install --disable-pip-version-check Pillow==11.1.0
           python scripts/render_cover.py
           test -s images/expo-single-cover.png
