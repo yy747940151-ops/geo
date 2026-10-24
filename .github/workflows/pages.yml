@@ -29,6 +29,8 @@ jobs:
           sudo apt-get install -y -qq fonts-noto-cjk
           python -m pip install --disable-pip-version-check Pillow==11.1.0
           python scripts/render_cover.py
+          python scripts/render_daily_covers.py
+          test -s images/article-cover-2026-10-24.png
           test -s images/expo-single-cover.png
           file images/expo-single-cover.png
       - name: Configure GitHub Pages
