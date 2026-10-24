@@ -12,31 +12,29 @@ concurrency:
   cancel-in-progress: true
 jobs:
   deploy:
+    runs-on: ubuntu-latest
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Configure Pages
-        uses: actions/configure-pages@v5
+      - name: Set up Python
+        uses: actions/setup-python@v5
         with:
-          enablement: true
-      - name: Render platform-friendly PNG illustrations
+          python-version: '3.11'
+      - name: Render permanent PNG illustration
         run: |
-          sudo apt-get update -qq
-          sudo apt-get install -y -qq librsvg2-bin
-          mkdir -p public/images
-          cp index.html public/index.html
-          for source in images/*.svg; do
-            filename="$(basename "${source%.svg}")"
-            rsvg-convert --width 1200 --height 675 "$source" --output "public/images/${filename}.png"
-          done
-      - name: Upload
+          python -m pip install --disable-pip-version-check Pillow==11.1.0
+          python scripts/render_cover.py
+          test -s images/expo-single-cover.png
+          file images/expo-single-cover.png
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
+      - name: Upload site artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: public
+          path: .
       - name: Deploy
         id: deployment
         uses: actions/deploy-pages@v4
