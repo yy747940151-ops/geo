@@ -58,14 +58,27 @@ shadow.innerHTML='<style>'+
 '.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:9px}button{font:600 13px/1.5 inherit;border:0;background:#1b8abe;color:white;border-radius:6px;padding:8px 12px;cursor:pointer}button.alt{background:#d8eaf6;color:#174365}'+
 '.status{font-size:12px;color:#e0f2ff;margin-top:8px;white-space:pre-wrap}details{font-size:12px;margin-top:5px;color:#d4e7f5}summary{cursor:pointer}'+
 '.warning{font-size:12px;color:#cfedff;margin-top:7px}'+
-'</style><div class="panel"><div class="top"><span class="title">仪器营销文章工作台 · V5</span>'+
+'.platform-label{font-size:13px;font-weight:650;margin-top:12px;color:#e7f2ff}'+
+'.accounts{display:flex;flex-wrap:wrap;gap:9px;margin-top:7px;min-height:36px;align-items:center}'+
+'.account{display:flex;gap:7px;align-items:center;background:#f0f8ff;color:#153e5b;padding:6px 11px;border-radius:8px;cursor:pointer}'+
+'.account input{width:17px;height:17px;accent-color:#1281c1;cursor:pointer}'+
+'.accounts span{font-size:13px}'+
+'.results{font-size:12px;margin-top:9px;max-height:180px;overflow:auto}'+
+'.results a{color:#cef3ff;text-decoration:underline}'+
+'.results p{margin:2px 0}'+
+'</style><div class="panel"><div class="top"><span class="title">仪器营销文章工作台 · V5.2</span>'+
 '<input class="input" id="titleInput" aria-label="编辑文章标题" />'+
 '</div><div class="actions">'+
-'<button id="sync">一键同步干净正文</button>'+
+'<button id="syncSelected">保存到勾选平台草稿</button>'+
+'<button id="refresh" class="alt">刷新平台账号</button>'+
+'<button id="sync" class="alt">使用原同步弹窗（备用）</button>'+
 '<button id="preview" class="alt">核对同步内容</button><button id="cover" class="alt">查看/保存封面图</button>'+
 '<button id="save" class="alt">保存本机修改</button>'+
 '<button id="reset" class="alt">恢复测试稿</button>'+
-'</div><div class="status" id="status">检查同步助手与封面状态...</div>'+
+'</div><div class="platform-label">选择要保存草稿的平台（直接读取插件里已登录的账号）：</div>'+
+'<div id="accounts" class="accounts" role="group" aria-label="同步平台选择"><span>正在读取已登录平台...</span></div>'+
+'<div id="results" class="results" role="status" aria-live="polite"></div>'+
+'<div class="status" id="status">检查同步助手与封面状态...</div>'+
 '<details><summary>说明与诊断（不会进入文章）</summary><div class="warning">正文只取下方文章内容，顶部工作台控件不参与同步。图片作为正文首图并附带封面地址提交，但当前同步助手不会自动给百家号和知乎草稿设置封面；封面需在相应平台补齐。暂不直接公开发布。</div><pre id="diag"></pre></details></div>';
 var el=id=>shadow.getElementById(id);
 el("titleInput").value=titleNode.textContent;
@@ -100,6 +113,97 @@ function getPost(){
  if(excluded.some(function(t){return content.indexOf(t)!==-1;}))throw new Error("检测到工作台说明文字，已取消同步。");
  return {title:title,desc:editor.innerText.replace(/\s+/g," ").slice(0,130),content:content,thumb:COVER};
 }
+
+// Independent platform selector uses the plugin's public legacy bridge.
+// This avoids relying on the modal's platform checkbox rendering.
+var availableAccounts=[];
+var platformNames={baijiahao:"百家号",sohu:"搜狐号",zhihu:"知乎"};
+var selectedPlatforms={"baijiahao":true,"sohu":true,"zhihu":true};
+var submitLocked=false;
+
+function showAccounts(accounts){
+ var wrap=el("accounts");
+ while(wrap.firstChild)wrap.removeChild(wrap.firstChild);
+ availableAccounts=accounts.filter(function(a){return a&&a.type&&Object.prototype.hasOwnProperty.call(platformNames,a.type);});
+ if(!availableAccounts.length){
+  var sp=document.createElement("span");
+  sp.textContent="未读取到百家号、搜狐号、知乎已登录账号。可点击「刷新平台账号」，或使用原弹窗。";
+  wrap.appendChild(sp);return;
+ }
+ availableAccounts.forEach(function(a,index){
+   var label=document.createElement("label");
+   label.className="account";
+   var input=document.createElement("input");
+   input.type="checkbox";input.value=a.type;input.id="platform-"+index;input.checked=selectedPlatforms[a.type]!==false;
+   input.addEventListener("change",function(){selectedPlatforms[a.type]=input.checked;});
+   var textNode=document.createElement("span");
+   textNode.textContent=(platformNames[a.type]||a.displayName||a.type)+(a.title&&a.title!==a.displayName?" · "+a.title:"");
+   label.appendChild(input);label.appendChild(textNode);wrap.appendChild(label);
+ });
+}
+
+function refreshAccounts(attempt){
+ attempt=attempt||0;
+ if(!window.$syncer||typeof window.$syncer.getAccounts!=="function"){
+  if(attempt<6){window.setTimeout(function(){refreshAccounts(attempt+1);},650);return;}
+  status("插件账号接口尚未准备好。请刷新工作台或点击「刷新平台账号」。");
+  showAccounts([]);return;
+ }
+ try{
+  window.$syncer.getAccounts(function(resp,maybe){
+   var accounts=Array.isArray(resp)?resp:Array.isArray(maybe)?maybe:[];
+   showAccounts(accounts);
+   status("已读取 "+availableAccounts.length+" 个目标平台账号。可直接勾选后点击「保存到勾选平台草稿」。");
+  });
+ }catch(err){status("读取账号失败："+err.message);showAccounts([]);}
+}
+
+function resultLine(label,message,href){
+ var row=document.createElement("p");
+ var name=document.createElement("strong");name.textContent=label+"：";row.appendChild(name);
+ row.appendChild(document.createTextNode(message));
+ if(href&&/^https:\/\//i.test(href)){
+  var a=document.createElement("a");a.href=href;a.target="_blank";a.rel="noopener noreferrer";
+  a.textContent="  查看草稿";row.appendChild(a);
+ }
+ el("results").appendChild(row);
+}
+
+el("refresh").addEventListener("click",function(){refreshAccounts(0);});
+el("syncSelected").addEventListener("click",function(){
+ if(submitLocked){status("正在同步，请勿重复提交。");return;}
+ try{
+  if(!window.$syncer||typeof window.$syncer.addTask!=="function")throw new Error("浏览器插件尚未连接，请先刷新平台账号。");
+  var selected=availableAccounts.filter(function(a){return selectedPlatforms[a.type]!==false;});
+  if(!selected.length)throw new Error("请至少勾选一个已登录的平台。");
+  var post=getPost();
+  // Content bridge saves drafts; it must not publish directly.
+  if(!window.confirm("确认将文章保存到 "+selected.map(function(a){return platformNames[a.type];}).join("、")+" 的草稿箱吗？不会直接公开发布。"))return;
+  submitLocked=true;el("syncSelected").disabled=true;
+  el("results").textContent="";
+  status("已提交到插件处理，等待各平台回报保存结果。");
+  var progress=function(task){
+    if(!task||!Array.isArray(task.accounts))return;
+    el("results").textContent="";
+    task.accounts.forEach(function(a){
+      var label=platformNames[a.type]||a.displayName||a.type||"未知平台";
+      var st=a.status==="done"?"已返回保存成功":a.status==="failed"?"失败："+(a.error||"未知原因"):a.msg||"处理中";
+      var link=a.status==="done"&&a.editResp&&a.editResp.draftLink;
+      resultLine(label,st,link);
+    });
+    var allDone=task.accounts.length>0&&task.accounts.every(function(a){return a.status==="done"||a.status==="failed";});
+    if(allDone){
+      submitLocked=false;el("syncSelected").disabled=false;
+      status("插件已返回各平台结果。请打开草稿核查正文图片与封面（百家号、知乎封面仍可能需要平台内设置）。");
+    }
+  };
+  window.$syncer.addTask({post:post,accounts:selected},progress,function(err){
+    if(err&&err.error){status("插件提交请求报告错误："+err.error);submitLocked=false;el("syncSelected").disabled=false;}
+  });
+ }catch(err){submitLocked=false;el("syncSelected").disabled=false;status("未提交："+err.message);}
+});
+window.setTimeout(function(){refreshAccounts(0);},400);
+
 el("sync").addEventListener("click",function(){
  try{
   if(typeof window.syncPost!=="function")throw new Error("SDK未加载");
@@ -135,7 +239,7 @@ try{
  editor.innerHTML=stored.content;el("titleInput").value=stored.title;setTitle(stored.title);
  }
 }catch(err){}
-status("V5.1：同步干净正文。百家号/知乎暂不支持自动草稿封面，请在编辑页补齐。");
+status("V5.2：可直接勾选百家号、搜狐号、知乎同步草稿。如账号暂未显示，请点「刷新平台账号」。");
 })();
 </script>
 </body></html>
