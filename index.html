@@ -66,11 +66,12 @@ shadow.innerHTML='<style>'+
 '.results{font-size:12px;margin-top:9px;max-height:180px;overflow:auto}'+
 '.results a{color:#cef3ff;text-decoration:underline}'+
 '.results p{margin:2px 0}'+
-'</style><div class="panel"><div class="top"><span class="title">仪器营销文章工作台 · V5.2</span>'+
+'</style><div class="panel"><div class="top"><span class="title">仪器营销文章工作台 · V5.3</span>'+
 '<input class="input" id="titleInput" aria-label="编辑文章标题" />'+
 '</div><div class="actions">'+
 '<button id="syncSelected">保存到勾选平台草稿</button>'+
 '<button id="refresh" class="alt">刷新平台账号</button>'+
+'<button id="patch" class="alt">下载安装封面修复版</button>'+
 '<button id="sync" class="alt">使用原同步弹窗（备用）</button>'+
 '<button id="preview" class="alt">核对同步内容</button><button id="cover" class="alt">查看/保存封面图</button>'+
 '<button id="save" class="alt">保存本机修改</button>'+
@@ -79,7 +80,7 @@ shadow.innerHTML='<style>'+
 '<div id="accounts" class="accounts" role="group" aria-label="同步平台选择"><span>正在读取已登录平台...</span></div>'+
 '<div id="results" class="results" role="status" aria-live="polite"></div>'+
 '<div class="status" id="status">检查同步助手与封面状态...</div>'+
-'<details><summary>说明与诊断（不会进入文章）</summary><div class="warning">正文只取下方文章内容，顶部工作台控件不参与同步。图片作为正文首图并附带封面地址提交，但当前同步助手不会自动给百家号和知乎草稿设置封面；封面需在相应平台补齐。暂不直接公开发布。</div><pre id="diag"></pre></details></div>';
+'<details><summary>说明与诊断（不会进入文章）</summary><div class="warning">正文只取下方文章内容，顶部工作台控件不参与同步。图片作为正文首图并附带封面地址提交，原版同步助手对百家号和知乎可能不会设置封面；可安装自用封面修复测试版，实际效果请以平台草稿核查为准。暂不直接公开发布。</div><pre id="diag"></pre></details></div>';
 var el=id=>shadow.getElementById(id);
 el("titleInput").value=titleNode.textContent;
 function status(s){el("status").textContent=s;diag();}
@@ -169,6 +170,10 @@ function resultLine(label,message,href){
  el("results").appendChild(row);
 }
 
+el("patch").addEventListener("click",function(){
+ window.open("https://github.com/yy747940151-ops/geo/blob/main/downloads/wechatsync-cover-fix-v2.0.10.1.zip","_blank","noopener");
+ status("已打开封面修复版安装包页面。请先关闭原插件，再加载解压后的修复版；安装是一次性操作。");
+});
 el("refresh").addEventListener("click",function(){refreshAccounts(0);});
 el("syncSelected").addEventListener("click",function(){
  if(submitLocked){status("正在同步，请勿重复提交。");return;}
@@ -181,7 +186,7 @@ el("syncSelected").addEventListener("click",function(){
   if(!window.confirm("确认将文章保存到 "+selected.map(function(a){return platformNames[a.type];}).join("、")+" 的草稿箱吗？不会直接公开发布。"))return;
   submitLocked=true;el("syncSelected").disabled=true;
   el("results").textContent="";
-  status("已提交到插件处理，等待各平台回报保存结果。");
+  status("已提交到插件处理。使用封面修复测试版时将尝试同步草稿封面；请核对最终结果。");
   var progress=function(task){
     if(!task||!Array.isArray(task.accounts))return;
     el("results").textContent="";
