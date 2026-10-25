@@ -13,7 +13,7 @@
     "baijiahao",
     "zhihu"
   ],
-  "publishState": "content_ready_unpublished",
+  "publishState": "published_user_confirmed_5_platforms",
   "source": "核验依据：HubSpot 官方《Use contact and company lifecycle stages》（2026-07-17）https://knowledge.hubspot.com/records/use-lifecycle-stages；Salesforce《Make Your Sales More Efficient with Sales Qualified Leads》（2024-03-18）https://www.salesforce.com/blog/sales/sales-qualified-lead/；仪器信息网数智营销中心（2026-10-25访问）https://www.instrument.com.cn/event/serviceStore/marketing.html。本文分级标准与运营动作属于方法建议，未引用虚构案例、行业转化率或产品能力保证。",
   "channelVariants": {
     "weibo": {
@@ -44,65 +44,61 @@
   "platformStatus": [
     {
       "platform": "weibo",
-      "status": "BLOCKED",
+      "status": "PUBLISHED_USER_CONFIRMED",
       "publishedUrl": null,
       "timestamp": null,
-      "result": "not_attempted",
-      "error": "本次运行没有已授权且经过真实公开发布验收的平台发布通道；本机专用浏览器与此云端运行环境未连接，无法核验公开URL。",
-      "retrySafe": true,
-      "requiredSetup": "一次性接通经测试的正式发布通道，完成账号授权及公开URL回读验证；不得用草稿同步代替公开发布。"
+      "result": "user_confirmed_on_platform",
+      "error": null,
+      "retrySafe": false,
+      "requiredSetup": null,
+      "verification": "User checked platform back office and confirmed published; public link not independently verified"
     },
     {
       "platform": "bilibili",
-      "status": "BLOCKED",
+      "status": "PUBLISHED_USER_CONFIRMED",
       "publishedUrl": null,
       "timestamp": null,
-      "result": "not_attempted",
-      "error": "本次运行没有已授权且经过真实公开发布验收的平台发布通道；本机专用浏览器与此云端运行环境未连接，无法核验公开URL。",
-      "retrySafe": true,
-      "requiredSetup": "一次性接通经测试的正式发布通道，完成账号授权及公开URL回读验证；不得用草稿同步代替公开发布。"
+      "result": "user_confirmed_on_platform",
+      "error": null,
+      "retrySafe": false,
+      "requiredSetup": null,
+      "verification": "User checked platform back office and confirmed published; public link not independently verified"
     },
     {
       "platform": "sohu",
-      "status": "BLOCKED",
+      "status": "PUBLISHED_USER_CONFIRMED",
       "publishedUrl": null,
       "timestamp": null,
-      "result": "not_attempted",
-      "error": "本次运行没有已授权且经过真实公开发布验收的平台发布通道；本机专用浏览器与此云端运行环境未连接，无法核验公开URL。",
-      "retrySafe": true,
-      "requiredSetup": "一次性接通经测试的正式发布通道，完成账号授权及公开URL回读验证；不得用草稿同步代替公开发布。"
-    },
-    {
-      "platform": "netease",
-      "status": "BLOCKED",
-      "publishedUrl": null,
-      "timestamp": null,
-      "result": "not_attempted",
-      "error": "本次运行没有已授权且经过真实公开发布验收的平台发布通道；本机专用浏览器与此云端运行环境未连接，无法核验公开URL。",
-      "retrySafe": true,
-      "requiredSetup": "一次性接通经测试的正式发布通道，完成账号授权及公开URL回读验证；不得用草稿同步代替公开发布。"
+      "result": "user_confirmed_on_platform",
+      "error": null,
+      "retrySafe": false,
+      "requiredSetup": null,
+      "verification": "User checked platform back office and confirmed published; public link not independently verified"
     },
     {
       "platform": "baijiahao",
-      "status": "BLOCKED",
+      "status": "PUBLISHED_USER_CONFIRMED",
       "publishedUrl": null,
       "timestamp": null,
-      "result": "not_attempted",
-      "error": "本次运行没有已授权且经过真实公开发布验收的平台发布通道；本机专用浏览器与此云端运行环境未连接，无法核验公开URL。",
-      "retrySafe": true,
-      "requiredSetup": "一次性接通经测试的正式发布通道，完成账号授权及公开URL回读验证；不得用草稿同步代替公开发布。"
+      "result": "user_confirmed_on_platform",
+      "error": null,
+      "retrySafe": false,
+      "requiredSetup": null,
+      "verification": "User checked platform back office and confirmed published; public link not independently verified"
     },
     {
       "platform": "zhihu",
-      "status": "BLOCKED",
-      "publishedUrl": null,
+      "status": "PUBLISHED_USER_CONFIRMED",
+      "publishedUrl": "https://zhuanlan.zhihu.com/p/2097689986921390118",
       "timestamp": null,
-      "result": "not_attempted",
-      "error": "本次运行没有已授权且经过真实公开发布验收的平台发布通道；本机专用浏览器与此云端运行环境未连接，无法核验公开URL。",
-      "retrySafe": true,
-      "requiredSetup": "一次性接通经测试的正式发布通道，完成账号授权及公开URL回读验证；不得用草稿同步代替公开发布。"
+      "result": "user_confirmed_on_platform",
+      "error": null,
+      "retrySafe": false,
+      "requiredSetup": null,
+      "verification": "Local script reported public_verified and user confirmed"
     }
   ],
   "coverState": "awaiting_github_pages_deployment",
-  "editorialNotes": "封面为GitHub Pages工作流生成的1200x675原创矢量风格信息图；发布前必须验证PNG返回HTTP 200且为有效图片。AI辅助创作，需遵守平台AI内容标识要求。"
+  "editorialNotes": "封面为GitHub Pages工作流生成的1200x675原创矢量风格信息图；发布前必须验证PNG返回HTTP 200且为有效图片。AI辅助创作，需遵守平台AI内容标识要求。",
+  "publicationReconciliation": "2026-10-25: All five platform publications confirmed by user. Never resubmit this article. Netease excluded."
 }
