@@ -13,7 +13,7 @@
     "baijiahao",
     "zhihu"
   ],
-  "publishState": "content_ready_unpublished",
+  "publishState": "partially_published_3_confirmed_2_drafts",
   "source": "核验来源（仅存元数据，不进入平台正文）：1）美国国家标准与技术研究院NIST《Metrological Traceability: Frequently Asked Questions and NIST Policy》，关于校准链、测量不确定度、溯源不等于适用性，https://www.nist.gov/metrology/metrological-traceability（2026-10-31访问）；2）ISO官方ISO/IEC 17025:2017标准介绍，检测和校准实验室能力、公正性、一致运行，2017版经2023年确认仍现行，https://www.iso.org/standard/66912.html（2026-10-31访问）；3）仪器信息网2026-08-13《首周狂揽20家厂商！仪信通AI版会员重磅上线》，核对AI版展示及内容优化服务，https://www.instrument.com.cn/news/20260813/958478.shtml；4）仪器信息网2026-10-16《国产 XRD 新势力：埃度纳米仪器展位焕新升级》，提及AI版旗舰店及应用内容展示，https://www.instrument.com.cn/news/20261016/995593.shtml。开头为典型情境，21天为建议测试期，40与12为明确标示的模拟示例。",
   "channelVariants": {
     "weibo": {
@@ -40,55 +40,61 @@
   "platformStatus": [
     {
       "platform": "weibo",
-      "status": "BLOCKED",
+      "status": "PUBLISHED_USER_CONFIRMED",
       "publishedUrl": null,
       "timestamp": null,
-      "result": "not_attempted",
-      "error": "仅归档文章与封面引用；未在云端使用Windows浏览器或执行平台提交，尚无可独立验收的云端正式发布通道。",
+      "result": "user_confirmed_published",
+      "error": null,
       "retrySafe": false,
-      "requiredSetup": "由原Windows发布程序先检查当天同标题是否已投稿、审核或公开发布；仅在确认未重复、会话有效且封面HTTPS PNG可用后执行。结果未知或遇风控时停止再次提交。"
+      "requiredSetup": null,
+      "verification": "User checked same-title item in platform published list"
     },
     {
       "platform": "bilibili",
-      "status": "BLOCKED",
+      "status": "PUBLISHED_USER_CONFIRMED",
       "publishedUrl": null,
       "timestamp": null,
-      "result": "not_attempted",
-      "error": "仅归档文章与封面引用；未在云端使用Windows浏览器或执行平台提交，尚无可独立验收的云端正式发布通道。",
+      "result": "user_confirmed_published",
+      "error": null,
       "retrySafe": false,
-      "requiredSetup": "由原Windows发布程序先检查当天同标题是否已投稿、审核或公开发布；仅在确认未重复、会话有效且封面HTTPS PNG可用后执行。结果未知或遇风控时停止再次提交。"
+      "requiredSetup": null,
+      "verification": "User checked same-title item in platform published list"
     },
     {
       "platform": "sohu",
-      "status": "BLOCKED",
+      "status": "DRAFT_USER_CONFIRMED",
       "publishedUrl": null,
       "timestamp": null,
-      "result": "not_attempted",
-      "error": "仅归档文章与封面引用；未在云端使用Windows浏览器或执行平台提交，尚无可独立验收的云端正式发布通道。",
+      "result": "user_confirmed_draft",
+      "error": null,
       "retrySafe": false,
-      "requiredSetup": "由原Windows发布程序先检查当天同标题是否已投稿、审核或公开发布；仅在确认未重复、会话有效且封面HTTPS PNG可用后执行。结果未知或遇风控时停止再次提交。"
+      "requiredSetup": null,
+      "verification": "User checked same-title item in platform draft list"
     },
     {
       "platform": "baijiahao",
-      "status": "BLOCKED",
+      "status": "DRAFT_USER_CONFIRMED",
       "publishedUrl": null,
       "timestamp": null,
-      "result": "not_attempted",
-      "error": "仅归档文章与封面引用；未在云端使用Windows浏览器或执行平台提交，尚无可独立验收的云端正式发布通道。",
+      "result": "user_confirmed_draft",
+      "error": null,
       "retrySafe": false,
-      "requiredSetup": "由原Windows发布程序先检查当天同标题是否已投稿、审核或公开发布；仅在确认未重复、会话有效且封面HTTPS PNG可用后执行。结果未知或遇风控时停止再次提交。"
+      "requiredSetup": null,
+      "verification": "User checked same-title item in platform draft list"
     },
     {
       "platform": "zhihu",
-      "status": "BLOCKED",
+      "status": "PUBLIC_VERIFIED_LOCAL_SCRIPT",
       "publishedUrl": null,
       "timestamp": null,
-      "result": "not_attempted",
-      "error": "仅归档文章与封面引用；未在云端使用Windows浏览器或执行平台提交，尚无可独立验收的云端正式发布通道。",
+      "result": "public_verified_local_execution",
+      "error": null,
       "retrySafe": false,
-      "requiredSetup": "由原Windows发布程序先检查当天同标题是否已投稿、审核或公开发布；仅在确认未重复、会话有效且封面HTTPS PNG可用后执行。结果未知或遇风控时停止再次提交。"
+      "requiredSetup": null,
+      "verification": "Local publisher reported public_verified; independent URL was not supplied"
     }
   ],
   "coverState": "awaiting_github_pages_deployment",
-  "editorialNotes": "2026-10-31原创稿：近7篇覆盖展会转化、线索判定、渠道证据、新品问题、ROI、搜索意图、询盘归属；本篇独立聚焦采购风险证据链。典型场景及模拟数值已标示。正文在首次写入即包含与coverUrl逐字一致的封面<img>，由现有GitHub Pages工作流生成PNG；本次尚未验证公开HTTPS响应。正文无<a>、营销链接、联系方式、二维码或CTA，ctaUrl为空；AI辅助及商业关联按平台规则披露。云端未执行任何正式投稿。"
+  "editorialNotes": "2026-10-31原创稿：近7篇覆盖展会转化、线索判定、渠道证据、新品问题、ROI、搜索意图、询盘归属；本篇独立聚焦采购风险证据链。典型场景及模拟数值已标示。正文在首次写入即包含与coverUrl逐字一致的封面<img>，由现有GitHub Pages工作流生成PNG；本次尚未验证公开HTTPS响应。正文无<a>、营销链接、联系方式、二维码或CTA，ctaUrl为空；AI辅助及商业关联按平台规则披露。云端未执行任何正式投稿。",
+  "publicationReconciliation": "2026-10-31: Weibo and Bilibili published (user-confirmed); Zhihu local public_verified; Baijiahao and Sohu existing drafts (user-confirmed). Do not recreate drafts or republish posted channels."
 }
